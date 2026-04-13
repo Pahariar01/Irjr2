@@ -25,3 +25,15 @@ async def websocket_endpoint(websocket: WebSocket):
                     engine.trains[t_id].throttle = float(data["throttle"])
     except WebSocketDisconnect:
         manager.disconnect(websocket)
+@app.post("/control")
+async def control_train(data: dict):
+    train_id = data.get("train_id")
+    throttle = float(data.get("throttle", 0))
+
+    if train_id in engine.trains:
+        train = engine.trains[train_id]
+        if train.is_player_controlled:
+            train.throttle = max(-1.0, min(1.0, throttle))
+            return {"status": "ok", "throttle": train.throttle}
+
+    return {"status": "error"}
