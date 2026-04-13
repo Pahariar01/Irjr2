@@ -37,3 +37,6 @@ async def control_train(data: dict):
             return {"status": "ok", "throttle": train.throttle}
 
     return {"status": "error"}
+@app.get("/trains")
+def get_trains():
+    return engine.trains
